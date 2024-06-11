@@ -11,7 +11,7 @@ export default function AuthForm() {
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isSubmitting },
   } = useForm<authFormSchemaType>({
     resolver: zodResolver(authFormSchema),
     defaultValues: {
@@ -28,7 +28,6 @@ export default function AuthForm() {
       <div>
         <img src='/images/auth-icon.jpg' alt='A lock icon' />
       </div>
-
       <FormInput
         id='email'
         type='email'
@@ -47,7 +46,9 @@ export default function AuthForm() {
       />
 
       <p>
-        <button type='submit'>Create Account</button>
+        <button type='submit' disabled={isSubmitting}>
+          {isSubmitting ? 'Submitting' : 'Create Account'}
+        </button>
       </p>
       <p>
         <Link href='/'>Login with existing account.</Link>

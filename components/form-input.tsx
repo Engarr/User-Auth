@@ -12,13 +12,8 @@ const FormInput: React.FC<FormInputProps> = ({
   return (
     <p>
       <label htmlFor={name}>{label}</label>
-      <input
-        type={type}
-        name={name}
-        id={id}
-        {...register(name)}
-      />
-      {error && <span>{error.message}</span>}
+      <input type={type} name={name} id={id} {...register(name)} />
+      {error && <span className='error'>{error.message}</span>}
     </p>
   );
 };

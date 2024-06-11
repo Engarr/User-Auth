@@ -26,6 +26,12 @@ ul {
   padding: 0;
   margin: 0;
 }
+.error {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  color: #a21d4c;
+}
 
 #auth-form {
   width: 90%;
@@ -89,13 +95,6 @@ ul {
 
 #auth-form a:hover {
   color: #4b34a9;
-}
-
-#form-errors {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  color: #a21d4c;
 }
 
 #auth-header {
