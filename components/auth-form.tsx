@@ -6,12 +6,14 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import FormInput from './form-input';
 import { z } from 'zod';
+import { signup } from '@/actions/auth-actions';
 
 export default function AuthForm() {
   const {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
+    setError,
   } = useForm<authFormSchemaType>({
     resolver: zodResolver(authFormSchema),
     defaultValues: {
@@ -20,14 +22,22 @@ export default function AuthForm() {
     },
   });
 
-  const onSubmit = (values: z.infer<typeof authFormSchema>) =>
-    console.log(values);
+  const onSubmit = async (values: authFormSchemaType) => {
+    const result = await signup(values);
+    if (result?.errors) {
+      setError('email', {
+        type: 'manual',
+        message: result.errors.email,
+      });
+    }
+  };
 
   return (
     <form id='auth-form' onSubmit={handleSubmit(onSubmit)}>
       <div>
         <img src='/images/auth-icon.jpg' alt='A lock icon' />
       </div>
+
       <FormInput
         id='email'
         type='email'
