@@ -5,17 +5,18 @@ import { authFormSchemaType, authFormSchema } from '@/lib/auth-schema';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import FormInput from './form-input';
-import { z } from 'zod';
-import { signup } from '@/actions/auth-actions';
+import { login, signup } from '@/actions/auth-actions';
+import { ValidFieldNames } from '@/lib/types';
 
-export default function AuthForm() {
+export default function AuthForm({ mode }: { mode: string }) {
   const {
     register,
     handleSubmit,
+
     formState: { errors, isSubmitting },
     setError,
   } = useForm<authFormSchemaType>({
-    resolver: zodResolver(authFormSchema),
+    resolver: mode === 'login' ? undefined : zodResolver(authFormSchema),
     defaultValues: {
       email: '',
       password: '',
@@ -23,7 +24,9 @@ export default function AuthForm() {
   });
 
   const onSubmit = async (values: authFormSchemaType) => {
-    const result = await signup(values);
+    const result =
+      mode === 'login' ? await login(values) : await signup(values);
+
     if (result?.errors) {
       setError('email', {
         type: 'manual',
@@ -31,7 +34,14 @@ export default function AuthForm() {
       });
     }
   };
-
+  const resetErrors = () => {
+    Object.keys(errors).forEach((fieldName) => {
+      setError(fieldName as ValidFieldNames, {
+        type: 'manual',
+        message: '',
+      });
+    });
+  };
   return (
     <form id='auth-form' onSubmit={handleSubmit(onSubmit)}>
       <div>
@@ -57,11 +67,19 @@ export default function AuthForm() {
 
       <p>
         <button type='submit' disabled={isSubmitting}>
-          {isSubmitting ? 'Submitting' : 'Create Account'}
+          {isSubmitting
+            ? 'Submitting'
+            : mode === 'login'
+            ? 'Login'
+            : 'Create Account'}
         </button>
       </p>
-      <p>
-        <Link href='/'>Login with existing account.</Link>
+      <p onClick={resetErrors}>
+        {mode === 'login' ? (
+          <Link href='/?mode=signup'>Create an account.</Link>
+        ) : (
+          <Link href='/?mode=login'>Login with existing account.</Link>
+        )}
       </p>
     </form>
   );
